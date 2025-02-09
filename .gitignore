@@ -1,6 +1,5 @@
 .DS_Store
 .direnv/
 __pycache__/
-flake.lock
 manim/
 media/

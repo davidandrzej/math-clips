@@ -22,11 +22,7 @@ class RepeatedNGon(Scene):
             self.play(Create(unit_circle))
             self.wait()
             self.ngonAnimation(N)
-
-
-                
-
-                
+                               
     def ngonAnimation(self, N):
         # ------------------------------
         # 1) Parameters

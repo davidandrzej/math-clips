@@ -1,5 +1,7 @@
 {
-  description = "Python project with an overlay for moderngl";
+  # Context: getting some of the graphics backends for manim (ce)
+  # to work on apple silicon was kind of a mess... 
+  description = "Python project with overlay for moderngl";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
