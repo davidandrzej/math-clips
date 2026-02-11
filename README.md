@@ -35,3 +35,19 @@ _Assuming the environment is all set up nicely_ (🫠), movies can be generated 
 ```
 manim -p cosets.py CosetsAndWaveInZ12
 ```
+
+If `manim` is not found, your shell likely has not loaded the Nix/direnv environment yet:
+
+```
+direnv allow
+direnv reload
+which manim
+manim --version
+```
+
+If `direnv` integration is not enabled in your shell, you can still enter the flake shell directly:
+
+```
+nix develop
+manim --version
+```

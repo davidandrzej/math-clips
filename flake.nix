@@ -54,9 +54,11 @@
 
         packages = [
           (pkgs.python3.withPackages (p: [            
+            p.manim
             p.glcontext
             p.moderngl
           ]))
+          pkgs.ffmpeg
         ];
 
         shellHook = ''
