@@ -61,6 +61,8 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [ myOverlay ];
+        config.allowBrokenPredicate = pkg:
+          nixpkgs.lib.hasInfix "screeninfo" (nixpkgs.lib.getName pkg);
       };
     in {
       devShells.default = pkgs.mkShell {
