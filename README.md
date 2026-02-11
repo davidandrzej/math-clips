@@ -51,3 +51,13 @@ If `direnv` integration is not enabled in your shell, you can still enter the fl
 nix develop
 manim --version
 ```
+
+### Apple Silicon (macOS) note
+
+If `direnv reload` / `nix develop` fails with a `glibc-nolibgcc ... not available on aarch64-apple-darwin` error, update to the latest version of this repo: the flake drops `moderngl-window` on Darwin so the dev shell can evaluate cleanly.
+
+When rendering on macOS in this shell, prefer the Cairo backend:
+
+```
+manim --renderer=cairo -p cosets.py CosetsAndWaveInZ12
+```
