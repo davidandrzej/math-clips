@@ -24,21 +24,31 @@
               };
               nativeBuildInputs = [ pySelf.setuptools-scm ];
             };
-            moderngl = builtins.trace "Overriding moderngl from myOverlay" (
-              pySelf.buildPythonPackage rec {
-                pname = "moderngl";
-                version = "5.12.0";
-                pyproject = true;
-                src = pySelf.fetchPypi {
-                  inherit pname version;
-                  hash = "sha256-UpNqmMyy8uHW48sYUospGfaDHn4/kk54i1hzutzlEps=";
-                };
-                nativeBuildInputs = [ pySelf.setuptools-scm ];
+            moderngl = pySelf.buildPythonPackage rec {
+              pname = "moderngl";
+              version = "5.12.0";
+              pyproject = true;
+              src = pySelf.fetchPypi {
+                inherit pname version;
+                hash = "sha256-UpNqmMyy8uHW48sYUospGfaDHn4/kk54i1hzutzlEps=";
+              };
+              nativeBuildInputs = [ pySelf.setuptools-scm ];
 
-                # This line is critical:
-                propagatedBuildInputs = [ pySelf.glcontext ];
-              }
-            );
+              propagatedBuildInputs = [ pySelf.glcontext ];
+            };
+
+            # On Apple Silicon, nixpkgs' moderngl-window dependency chain currently
+            # evaluates linux-only OpenGL stack inputs (glibc), which prevents the
+            # shell from even loading. The Cairo renderer path does not need
+            # moderngl-window, so we drop it on Darwin to keep a working dev shell.
+            manim = if prev.stdenv.isDarwin then
+              pySuper.manim.overridePythonAttrs (old: {
+                propagatedBuildInputs = prev.lib.filter
+                  (pkg: (prev.lib.getName pkg) != "moderngl-window")
+                  (old.propagatedBuildInputs or [ ]);
+              })
+            else
+              pySuper.manim;
           };
         };
         python3 = final.python3_12;
