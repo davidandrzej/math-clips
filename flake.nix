@@ -43,6 +43,10 @@
             # moderngl-window, so we drop it on Darwin to keep a working dev shell.
             manim = if prev.stdenv.isDarwin then
               pySuper.manim.overridePythonAttrs (old: {
+                dependencies = prev.lib.filter
+                  (pkg: (prev.lib.getName pkg) != "moderngl-window")
+                  (old.dependencies or [ ]);
+
                 propagatedBuildInputs = prev.lib.filter
                   (pkg: (prev.lib.getName pkg) != "moderngl-window")
                   (old.propagatedBuildInputs or [ ]);
