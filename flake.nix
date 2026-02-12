@@ -36,23 +36,40 @@
 
               propagatedBuildInputs = [ pySelf.glcontext ];
             };
+            screeninfo = pySuper.screeninfo.overridePythonAttrs (old: {
+              doCheck = false;
+              dontCheckRuntimeDeps = true;
+              meta = (old.meta or { }) // { broken = false; };
+            });
 
             # On Apple Silicon, nixpkgs' moderngl-window dependency chain currently
             # evaluates linux-only OpenGL stack inputs (glibc), which prevents the
             # shell from even loading. The Cairo renderer path does not need
             # moderngl-window, so we drop it on Darwin to keep a working dev shell.
-            manim = if prev.stdenv.isDarwin then
-              pySuper.manim.overridePythonAttrs (old: {
-                dependencies = prev.lib.filter
-                  (pkg: (prev.lib.getName pkg) != "moderngl-window")
-                  (old.dependencies or [ ]);
+            manim = pySuper.manim.overridePythonAttrs (old:
+              let
+                base = {
+                  nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+                    pySelf.setuptools
+                    pySelf."poetry-core"
+                  ];
+                };
+              in
+              if prev.stdenv.isDarwin then
+                base // prev.lib.optionalAttrs prev.stdenv.isDarwin {
+                  dontCheckRuntimeDeps = true;
+                } // {
+                  dependencies = prev.lib.filter
+                    (pkg: (prev.lib.getName pkg) != "moderngl-window")
+                    (old.dependencies or [ ]);
 
-                propagatedBuildInputs = prev.lib.filter
-                  (pkg: (prev.lib.getName pkg) != "moderngl-window")
-                  (old.propagatedBuildInputs or [ ]);
-              })
-            else
-              pySuper.manim;
+                  propagatedBuildInputs = prev.lib.filter
+                    (pkg: (prev.lib.getName pkg) != "moderngl-window")
+                    (old.propagatedBuildInputs or [ ]);
+                }
+              else
+                base
+            );
           };
         };
         python3 = final.python3_12;
@@ -61,8 +78,11 @@
       pkgs = import nixpkgs {
         inherit system;
         overlays = [ myOverlay ];
-        config.allowBrokenPredicate = pkg:
-          nixpkgs.lib.hasInfix "screeninfo" (nixpkgs.lib.getName pkg);
+        config = {
+          # screeninfo is marked broken in nixpkgs, but works for our use case.
+          allowBrokenPredicate = pkg:
+            nixpkgs.lib.hasInfix "screeninfo" (nixpkgs.lib.getName pkg);
+        };
       };
     in {
       devShells.default = pkgs.mkShell {

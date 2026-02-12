@@ -27,6 +27,8 @@ supplemented by:
 - `queue_flow.py` simple animation of a processing queue with fixed processing (work) time and nonuniform arrival times. In the left-hand diagram, the number of entries intersected by the moving vertical timeline gives the queue depth at any point in time. Also noteworthy is the long cycle time on the final item due to arriving after the "burst" of work filling the queue ahead of it.
 - `linear_compose.py` visualize the mechanics of matrix multiplication as emerging natural from the composition of linear maps between finite vector spaces. Inspired by the presentation from _Linear Algebra Done Right_ by Sheldon Axler.
 - `coset_partition_quotient.py` make ANY homomorphism _injective_ with this ONE WEIRD TRICK (take quotient group of the domain with respect to the kernel)
+- `kernel_injective..py` for a homomorphism, trivial kernel iff injective.
+- `ortho-preserving.py` rotation + uniform scaling preserve orthogonality while anisotropic scaling breaks it, inspired by Exercise 2 in Ch 7D of Axler's _Linear Algebra Done Right_ (prove an "orthogonality-preserving" linear map T between two finite-dimensional inner product spaces must be a scalar multiple of some isometry)
 
 ## How to run 
 
